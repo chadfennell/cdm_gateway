@@ -1,0 +1,8 @@
+{
+  "type": "Document",
+  "page": [
+    { "pagetitle": "Page 1", "pagefile": "815.jp2", "pageptr": "814" },
+    { "pagetitle": "Page 2", "pagefile": "816.jp2", "pageptr": "815" },
+    { "pagetitle": "Page 90", "pagefile": "904.jp2", "pageptr": "903" }
+  ]
+}

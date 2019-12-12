@@ -1,0 +1,19 @@
+version: '3'
+services:
+  app:
+    build: .
+    command: mix phx.server    
+    ports:
+      - "4000:4000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    environment:
+      - MIX_ENV=dev      
+  db:
+    image: postgres:12.1
+    volumes:
+      - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:

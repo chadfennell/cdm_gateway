@@ -1,0 +1,18 @@
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2019-09-29T19:09:22Z</responseDate>
+  <request verb="ListSets">http://cdm16022.contentdm.oclc.org/oai/oai.php</request>
+  <ListSets>
+    <set>
+      <setSpec>swede</setSpec>
+      <setName>American Swedish Institute</setName>
+      <setDescription>
+        <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" 
+          xmlns:dc="http://purl.org/dc/elements/1.1/" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+          <dc:description>Description Here</dc:description>
+        </oai_dc:dc>
+      </setDescription>
+    </set>
+  </ListSets>
+</OAI-PMH>
