@@ -7,8 +7,8 @@ defmodule CdmEtl.SetIngest do
 
   defstruct([
     :set_spec,
-    :ingest_batch_id,
-    :ingest_run_id,
+    :resumption_token,
+    :callback,
     identifier_list_worker: CdmEtl.Oai.IdentifierList.Worker,
     compounds_worker: CdmEtl.CdmApi.Compounds.Worker,
     item_worker: CdmEtl.CdmApi.Item.Worker
@@ -16,12 +16,19 @@ defmodule CdmEtl.SetIngest do
 
   # Client
 
-  def run!(args) do
+  def start(args) do
     set_ingest = struct(%SetIngest{}, args)
 
     set_ingest.identifier_list_worker.run(
       identifiers_callback(set_ingest),
       {:start, set_ingest.set_spec}
+    )
+  end
+
+  def next(set_ingest) do
+    set_ingest.identifier_list_worker.run(
+      identifiers_callback(set_ingest),
+      {:next, set_ingest.resumption_token}
     )
   end
 
@@ -45,7 +52,10 @@ defmodule CdmEtl.SetIngest do
 
     # Process Deleted Records
     identifier_list.deletables
-    |> Enum.map(&persist(%{}, &1, set_ingest, :deleted))
+    |> Enum.map(&persist(&1, nil, set_ingest, :deleted))
+
+    # Allows clients to iterrate through sets
+    set_ingest.callback.(identifier_list, set_ingest)
   end
 
   defp compounds_worker(parent_id, set_ingest) do
@@ -71,15 +81,15 @@ defmodule CdmEtl.SetIngest do
     end
   end
 
-  defp persist(item, parent_id, set_ingest, status) do
+  defp persist(item, parent_id, set_ingest, :active) do
+    id = item["id"]
+    modified = item["dmmodified"]
+    Logger.info("ACTIVE: Persist: #{id} #{parent_id} #{inspect(set_ingest)} #{modified}")
   end
 
-  defp filename(id) do
-    Enum.join(String.split(id, "/"), "_")
-  end
-
-  defp done(set_ingest) do
-    IO.puts("DONE")
-    IO.inspect(set_ingest)
+  defp persist(item, _, set_ingest, :deleted) do
+    id = item["id"]
+    modified = item["datestamp"]
+    Logger.info("DELETED: Persist: #{id}  #{inspect(set_ingest)} #{modified}")
   end
 end

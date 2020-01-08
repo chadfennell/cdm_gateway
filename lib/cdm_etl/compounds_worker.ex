@@ -100,15 +100,11 @@ defmodule CdmEtl.CdmApi.Compounds.Worker do
   end
 
   defp to_ids(compound, id) do
-    compound["page"]
+    compound
+    |> (&extract_page(&1)).()
+    |> (&sanitize(&1)).()
     |> Enum.map(& &1["pageptr"])
     |> Enum.map(&"#{extract_collection(id)}/#{&1}")
-
-    # case compound["pageptr"] do
-    #   "" -> {}
-    #   id -> "#{extract_collection(id)}/#{id}"
-    # end
-    # "#{extract_collection(id)}/#{compound["pageptr"]}"
   end
 
   defp extract_collection(id) do

@@ -31,7 +31,14 @@ defmodule CdmEtl.Oai.Identifier.WorkerTest do
         status: ""
       }
     ],
-    :deletables => ["swede/2"],
+    :deletables => [
+      %{
+        datestamp: "2012-02-08",
+        identifier: "oai:cdm16022.contentdm.oclc.org:swede/2",
+        setSpec: "swede",
+        status: "deleted"
+      }
+    ],
     :updatables => ["swede/3"],
     :resumptionToken => "swede:200:swede:0000-00-00:9999-99-99:oai_dc"
   }

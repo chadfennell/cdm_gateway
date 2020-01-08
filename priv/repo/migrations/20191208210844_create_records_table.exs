@@ -1,14 +1,13 @@
-defmodule CdmGateway.Repo.Migrations.CreateRecordsTable do
+defmodule CdmGateway.Repo.Migrations.CreateRecords do
   use Ecto.Migration
 
   def change do
-    create table("records") do
+    create table(:records) do
       add :metadata, :map
-      add :is_deleted, :boolean
+      add :is_deleted, :boolean, default: false, null: false
       add :parent_id, :integer
-      add :ingest_start, :naive_datetime
-      add :ingest_run_id, references(:ingest_runs), null: false
-      add :ingest_set_id, references(:ingest_sets), null: false
+      add :last_modified, :naive_datetime
+
       timestamps()
     end
   end

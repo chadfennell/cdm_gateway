@@ -121,7 +121,6 @@ defmodule CdmEtl.Oai.IdentifierList.Worker do
   defp deletables(identifiers) do
     identifiers
     |> Enum.filter(fn item -> item.status == "deleted" end)
-    |> Enum.map(&to_id(&1.identifier))
   end
 
   defp to_id(identifier) do
