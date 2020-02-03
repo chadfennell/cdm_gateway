@@ -4,23 +4,25 @@ defmodule CdmGatewayWeb.Api.V1.RecordsController do
 
   alias CdmGateway.Record
   alias CdmGatewayWeb.Pagination
+  alias CdmGatewayWeb.QueryBuilder
 
   @per_page 100
 
-  def index(conn, %{"page" => page}) do
+  def index(conn, params) do
     result =
       CdmGateway.Record
-      |> Pagination.page(String.to_integer(page), per_page: @per_page)
+      |> QueryBuilder.filter_by_set_spec(params)
+      |> Pagination.page(page(params), per_page: @per_page)
 
     render(conn, "index.json", records: result.records)
   end
 
-  def index(conn, _params) do
-    result =
-      CdmGateway.Record
-      |> Pagination.page(0, per_page: @per_page)
-
-    render(conn, "index.json", records: result.records)
+  def page(params) do
+    if params["page"] do
+      String.to_integer(params["page"])
+    else
+      0
+    end
   end
 
   def show(conn, %{"id" => id}) do
