@@ -16,7 +16,7 @@ defmodule CdmEtl.CdmApi.Item.Worker do
 
   # Client
 
-  @timeout 100_000
+  @timeout 2_000_000
 
   def run(id, callback) do
     Task.async(fn ->
@@ -83,14 +83,13 @@ defmodule CdmEtl.CdmApi.Item.Worker do
   defp sanitize(item), do: item
 
   defp fetch(%Worker{} = worker, id) do
-    case CdmEtl.Request.fetch(
-           [q: "dmGetItemInfo/#{id}/json"],
-           worker.base_url,
-           "/dmwebservices/index.php",
-           worker.http_client
-         ) do
-      {:ok, response} -> response |> to_map |> Map.merge(%{"id" => id})
-      {:timeout} -> {}
-    end
+    CdmEtl.Request.fetch(
+      [q: "dmGetItemInfo/#{id}/json"],
+      worker.base_url,
+      "/dmwebservices/index.php",
+      worker.http_client
+    )
+    |> to_map
+    |> Map.merge(%{"id" => id})
   end
 end

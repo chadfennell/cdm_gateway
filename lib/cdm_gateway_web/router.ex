@@ -20,7 +20,11 @@ defmodule CdmGatewayWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", CdmGatewayWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", CdmGatewayWeb, as: :api do
+    pipe_through :api
+
+    scope "/v1", Api.V1, as: :v1 do
+      resources "/records", RecordsController, only: [:index, :show]
+    end
+  end
 end

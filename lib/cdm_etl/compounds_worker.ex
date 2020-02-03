@@ -12,7 +12,7 @@ defmodule CdmEtl.CdmApi.Compounds.Worker do
     http_client: Tesla
   ])
 
-  @timeout 100_000
+  @timeout 2_000_000
 
   def run(id, callback) do
     Task.async(fn ->
@@ -57,20 +57,14 @@ defmodule CdmEtl.CdmApi.Compounds.Worker do
 
   """
   def fetch(id, worker) do
-    case CdmEtl.Request.fetch(
-           [q: "dmGetCompoundObjectInfo/#{id}/json"],
-           worker.base_url,
-           "/dmwebservices/index.php",
-           worker.http_client
-         ) do
-      {:ok, response} ->
-        response
-        |> (&to_map(&1)).()
-        |> (&to_ids(&1, id)).()
-
-      {:timeout} ->
-        {}
-    end
+    CdmEtl.Request.fetch(
+      [q: "dmGetCompoundObjectInfo/#{id}/json"],
+      worker.base_url,
+      "/dmwebservices/index.php",
+      worker.http_client
+    )
+    |> (&to_map(&1)).()
+    |> (&to_ids(&1, id)).()
   end
 
   @doc """

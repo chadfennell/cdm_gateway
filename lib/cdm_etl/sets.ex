@@ -40,9 +40,6 @@ defmodule CdmEtl.Oai.Sets do
       ["swede"]
 
   """
-  def set_specs(pid) do
-    get(pid) |> Enum.map(&pluck(&1, :setSpec))
-  end
 
   # Server (callbacks)
 
@@ -56,7 +53,7 @@ defmodule CdmEtl.Oai.Sets do
     {:reply, fetch(state[:base_url], state[:http_client]), state}
   end
 
-  defp fetch(base_url, http_client) do
+  def fetch(base_url, http_client \\ Tesla) do
     CdmEtl.Request.fetch(
       [verb: "ListSets"],
       base_url,
@@ -64,6 +61,11 @@ defmodule CdmEtl.Oai.Sets do
       http_client
     )
     |> to_list
+  end
+
+  def set_specs(sets) do
+    sets
+    |> Enum.map(&pluck(&1, :setSpec))
   end
 
   @doc """

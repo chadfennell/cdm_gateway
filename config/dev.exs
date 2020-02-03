@@ -7,7 +7,8 @@ config :cdm_gateway, CdmGateway.Repo,
   database: "cdm_gateway_dev",
   hostname: "db",
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: 60,
+  max_connections: 200
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -71,8 +72,10 @@ config :cdm_gateway, CdmGatewayWeb.Endpoint,
 
 # Custom Dev Logger Config:
 config :logger,
+  level: :debug,
   backends: [:console],
-  format: "$time $metadata[$level] $message\n"
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:pid]
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.

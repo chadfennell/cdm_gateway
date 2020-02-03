@@ -7,8 +7,8 @@ defmodule CdmEtl.CdmApi.Item.Pool do
     [
       {:name, {:local, :item_worker}},
       {:worker_module, CdmEtl.CdmApi.Item.Worker},
-      {:size, 2},
-      {:max_overflow, 2}
+      {:size, 20},
+      {:max_overflow, 10}
     ]
   end
 

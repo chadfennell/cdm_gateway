@@ -38,3 +38,5 @@ npm-debug.log
 .elixir_ls/
 /logs/
 .bash_history
+
+.hex

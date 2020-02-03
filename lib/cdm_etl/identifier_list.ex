@@ -1,8 +1,5 @@
 defmodule CdmEtl.Oai.IdentifierList do
   import SweetXml
-  use GenServer
-
-  @timeout 100_000
 
   # allows us to refer to our struct w/out the full
   # module path
@@ -11,21 +8,12 @@ defmodule CdmEtl.Oai.IdentifierList do
   defstruct([
     :base_url,
     :set_spec,
+    resumption_token: nil,
     http_client: Tesla
   ])
 
-  # Client
-
-  def get(pid, resumptionToken \\ nil) do
-    GenServer.call(pid, {:get, resumptionToken})
-  end
-
-  @doc """
-  Start the Process
-  """
-  def start_link(args \\ []) do
-    IO.puts("Starting Identifier List")
-    GenServer.start_link(__MODULE__, struct(%IdentifierList{}, args))
+  def get(args) do
+    fetch(struct(%IdentifierList{}, args))
   end
 
   @moduledoc """
@@ -93,67 +81,40 @@ defmodule CdmEtl.Oai.IdentifierList do
   defp deletables(identifiers) do
     identifiers
     |> Enum.filter(fn item -> item.status == "deleted" end)
-    |> Enum.map(&to_id(&1.identifier))
   end
 
   defp to_id(identifier) do
     Enum.at(String.split(identifier, ":"), -1)
   end
 
-  # Server (callbacks)
-
-  @impl true
-  def init(identifier_list) do
-    {:ok, identifier_list}
-  end
-
-  @impl true
-  def handle_call({:get, nil}, _from, identifier_list) do
-    IO.puts("Requesting Initial batch if identifiers for set: #{identifier_list.set_spec}")
-    {:reply, fetch(identifier_list), identifier_list}
-  end
-
-  @impl true
-  def handle_call({:get, resumption_token}, _from, identifier_list) do
-    IO.puts(
-      "Requesting Initial batch if identifiers for set: #{identifier_list.set_spec} with token #{
-        resumption_token
-      }"
-    )
-
-    {:reply, fetch(identifier_list, resumption_token), identifier_list}
-  end
-
   # Fetch the first result from an OAI endpoint
-  defp fetch(%IdentifierList{} = identifier_list) do
-    case CdmEtl.Request.fetch(
-           [
-             verb: "ListIdentifiers",
-             metadataPrefix: "oai_dc",
-             set: identifier_list.set_spec
-           ],
-           identifier_list.base_url,
-           "/oai/oai.php",
-           identifier_list.http_client
-         ) do
-      {:ok, response} -> response |> to_map
-      {:timeout} -> {}
-    end
+  defp fetch(%IdentifierList{resumption_token: nil} = identifier_list) do
+    CdmEtl.Request.fetch(
+      [
+        verb: "ListIdentifiers",
+        metadataPrefix: "oai_dc",
+        set: identifier_list.set_spec
+      ],
+      identifier_list.base_url,
+      "/oai/oai.php",
+      identifier_list.http_client
+    )
+    |> to_map
+    |> Map.merge(%{base_url: identifier_list.base_url})
   end
 
   # Fetch a batch of results following the first batch from and OAI endpoint
-  defp fetch(%IdentifierList{} = identifier_list, resumption_token) do
-    case CdmEtl.Request.fetch(
-           [
-             verb: "ListIdentifiers",
-             resumptionToken: resumption_token
-           ],
-           identifier_list.base_url,
-           "/oai/oai.php",
-           identifier_list.http_client
-         ) do
-      {:ok, response} -> response |> to_map
-      {:timeout} -> {}
-    end
+  defp fetch(%IdentifierList{} = identifier_list) do
+    CdmEtl.Request.fetch(
+      [
+        verb: "ListIdentifiers",
+        resumptionToken: identifier_list.resumption_token
+      ],
+      identifier_list.base_url,
+      "/oai/oai.php",
+      identifier_list.http_client
+    )
+    |> to_map
+    |> Map.merge(%{base_url: identifier_list.base_url})
   end
 end

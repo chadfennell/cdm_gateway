@@ -7,8 +7,8 @@ defmodule CdmEtl.CdmApi.Compounds.Pool do
     [
       {:name, {:local, :compounds_worker}},
       {:worker_module, CdmEtl.CdmApi.Compounds.Worker},
-      {:size, 2},
-      {:max_overflow, 2}
+      {:size, 20},
+      {:max_overflow, 10}
     ]
   end
 

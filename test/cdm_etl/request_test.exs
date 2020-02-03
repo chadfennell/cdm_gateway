@@ -42,14 +42,7 @@ end
 
 defmodule CdmEtl.CdmApi.RequestTest do
   use ExUnit.Case
-  doctest CdmEtl.Request
-
-  describe "when an endpoint times out" do
-    test "returns a timeout message" do
-      assert CdmEtl.Request.fetch(nil, nil, nil, TimeoutReuestHttpClient) ==
-               {:error, :timeout}
-    end
-  end
+  # doctest CdmEtl.Request
 
   describe "when an endpoint refused to connect" do
     test "raises an exception" do

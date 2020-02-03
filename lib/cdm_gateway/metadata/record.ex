@@ -3,10 +3,13 @@ defmodule CdmGateway.Metadata.Record do
   import Ecto.Changeset
 
   schema "records" do
+    field :cdm_id, :string
     field :is_deleted, :boolean, default: false
-    field :last_modified, :naive_datetime
-    field :metadata, :map
+    field :is_primary, :boolean
+    field :set_spec, :string
     field :parent_id, :integer
+    field :cdm_modified, :naive_datetime
+    field :metadata, :map
 
     timestamps()
   end
